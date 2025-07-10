@@ -1,11 +1,30 @@
 import customtkinter as ctk
+import logging
+
 from string import ascii_uppercase
+from collections import defaultdict
+from networking import Networking
+
+
+
+
+logging.basicConfig(format="%(levelname)s | %(asctime)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S", filename="Hangman.log", filemode="a")
+
 
 root = ctk.CTk()
 root.geometry("1000x563")
 ctk.set_appearance_mode("dark")
 
-letter_buttons = []
+letter_buttons: list = []
+word_characters: dict = defaultdict(list)
+
+
+def reset_buttons():
+    for button in letter_buttons:
+        button.reset()
+
+
+word = Networking.fetch_word()
 
 
 class LetterButton(ctk.CTkButton):
@@ -32,7 +51,15 @@ class LetterButton(ctk.CTkButton):
         self.configure(state="Normal")
 
 # Create buttons A-Z
-resetBtn = ctk.CTkButton(root, text="Reset", command=reset)
+resetBtn = ctk.CTkButton(root, text="Reset", command=reset_buttons)
+resetBtn.grid(column = 10, row=5)
+
+for i, letter in enumerate(word):
+    word_characters[letter].append(i)
+
+print(word_characters)
+print(word_characters.keys())
+
 
 for i, letter in enumerate(ascii_uppercase):
     btn = LetterButton(root, letter)
